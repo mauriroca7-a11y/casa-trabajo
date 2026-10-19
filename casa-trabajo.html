@@ -363,9 +363,7 @@ const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator
 const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
 function installBox(){
   if(standalone())return '';
-  if(DP)return `<button class="btn nv" data-act="install">${ic('plus',20)} Instalar la app en este celular</button>`;
-  if(isIOS())return `<p class="hint">Para instalar: toca el botón Compartir y luego «Agregar a pantalla de inicio».</p>`;
-  return `<p class="hint">Para instalar: abre el menú ⋮ del navegador y elige «Instalar aplicación» o «Agregar a pantalla de inicio».</p>`;
+  return `<button class="btn nv" data-act="install">${ic('plus',20)} Instalar la app en este celular</button>`;
 }
 function vChooser(){return `<div class="ctr">
 <div class="brandrow">${logo('#14633a',74)}<div>CASA<b>TRABAJO</b></div></div>
@@ -585,7 +583,10 @@ goto(el){go(el.dataset.v)},
 sec(el){go('sec',{k:el.dataset.v})},
 seg(el){ST[el.dataset.k]=el.dataset.v;render()},
 gear(){openSheet({title:'Tu app',html:`<p class="small">${remote()?(ST.online?'✅ Conectada.':'⚠️ Sin conexión ahora.'):''}</p>${installBox()||'<p class="small">✅ La app ya está instalada.</p>'}`})},
-install(){if(DP){DP.prompt();DP.userChoice.finally(()=>{DP=null;render()})}},
+install(){
+  if(DP){DP.prompt();DP.userChoice.finally(()=>{DP=null;render()});return}
+  openSheet({title:'Instalar la app',html:isIOS()?'<p>1. Toca el botón <b>Compartir</b> del navegador.</p><p>2. Elige <b>Agregar a pantalla de inicio</b>.</p>':'<p>1. Toca los <b>tres puntos ⋮</b> arriba a la derecha del navegador.</p><p>2. Elige <b>Instalar aplicación</b> o <b>Agregar a pantalla de inicio</b>.</p><p class="hint">Después la abres desde el icono, como cualquier app.</p>'});
+},
 mo(el){ST.mo+=Number(el.dataset.v);render()},
 chip(el){el.classList.toggle('on')},
 emo(el){el.parentNode.querySelectorAll('.emo').forEach(e=>e.classList.remove('on'));el.classList.add('on')},
